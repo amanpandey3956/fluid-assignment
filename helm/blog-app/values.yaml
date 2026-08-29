@@ -2,11 +2,11 @@ namespace: blog-app
 image:
   backend:
     repository: docker.io/amanpandey3956/blog-app-backend
-    tag: cc97b4d
+    tag: a159f48
     pullPolicy: IfNotPresent
   frontend:
     repository: docker.io/amanpandey3956/blog-app-frontend
-    tag: cc97b4d
+    tag: a159f48
     pullPolicy: IfNotPresent
 replicaCount:
   backend: 2
