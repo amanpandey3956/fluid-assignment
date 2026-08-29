@@ -1,19 +1,16 @@
 namespace: blog-app
-
 image:
   backend:
     repository: docker.io/amanpandey3956/blog-app-backend
-    tag: latest
+    tag: cc97b4d
     pullPolicy: IfNotPresent
   frontend:
     repository: docker.io/amanpandey3956/blog-app-frontend
-    tag: latest
+    tag: cc97b4d
     pullPolicy: IfNotPresent
-
 replicaCount:
   backend: 2
   frontend: 2
-
 db:
   user: postgres
   password: "AM121323@#$"
@@ -21,19 +18,15 @@ db:
   port: 5432
   storage: 2Gi
   storageClassName: standard
-
 backend:
   port: 5000
-
 frontend:
   containerPort: 8080
   servicePort: 80
-
 ingress:
   enabled: true
   className: nginx
   host: blog.local
-
 resources:
   db:
     requests:
