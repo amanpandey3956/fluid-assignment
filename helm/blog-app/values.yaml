@@ -1,0 +1,58 @@
+namespace: blog-app
+
+image:
+  backend:
+    repository: docker.io/amanpandey3956/blog-app-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  frontend:
+    repository: docker.io/amanpandey3956/blog-app-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+
+replicaCount:
+  backend: 2
+  frontend: 2
+
+db:
+  user: postgres
+  password: "AM121323@#$"
+  name: blog
+  port: 5432
+  storage: 2Gi
+  storageClassName: standard
+
+backend:
+  port: 5000
+
+frontend:
+  containerPort: 8080
+  servicePort: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  host: blog.local
+
+resources:
+  db:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  backend:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+  frontend:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi

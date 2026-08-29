@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog-app-db
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: blog-app-db
+    app.kubernetes.io/part-of: blog-app
+    app.kubernetes.io/component: database
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: blog-app-db
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: blog-app-db
+        app.kubernetes.io/part-of: blog-app
+        app.kubernetes.io/component: database
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: blog-app-db-secret
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata
+          resources:
+            requests:
+              cpu: {{ .Values.resources.db.requests.cpu }}
+              memory: {{ .Values.resources.db.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.db.limits.cpu }}
+              memory: {{ .Values.resources.db.limits.memory }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: false
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", {{ .Values.db.user | quote }}, "-d", {{ .Values.db.name | quote }}]
+            initialDelaySeconds: 15
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", {{ .Values.db.user | quote }}, "-d", {{ .Values.db.name | quote }}]
+            initialDelaySeconds: 5
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: blog-app-db-pvc
