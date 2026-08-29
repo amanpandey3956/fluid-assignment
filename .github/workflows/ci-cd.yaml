@@ -167,12 +167,9 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - id: sha
-        run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
       - name: Bump image tags in Helm values.yaml
         run: |
-          TAG=${{ steps.sha.outputs.short }}
+          TAG=${{ github.sha }}
           yq -i ".image.backend.tag = \"${TAG}\"" helm/blog-app/values.yaml
           yq -i ".image.frontend.tag = \"${TAG}\"" helm/blog-app/values.yaml
 
@@ -184,5 +181,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add helm/blog-app/values.yaml
-          git commit -m "ci: bump image tag to ${{ steps.sha.outputs.short }} [skip ci]" || echo "No changes"
+          git commit -m "ci: bump image tag to ${{ github.sha }} [skip ci]" || echo "No changes"
           git push
